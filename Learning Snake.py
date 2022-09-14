@@ -27,19 +27,21 @@ def press_play():
 
 # function to find the coordinates of the food and return them as a tuple
 def find_food(top_left, bottom_right, width=17, height=15, confidence=0.75):
-    food = pyautogui.locateCenterOnScreen('apple_44x44.png',
+    food = pyautogui.locateCenterOnScreen('apple center.png',
                                           region=(top_left.x, top_left.y,
                                                   bottom_right.x - top_left.x, bottom_right.y - top_left.y),
-                                          confidence=confidence)
+                                          confidence=confidence
+                                          )
     if food is None:
         return None
-    pyautogui.moveTo(food)
+    # pyautogui.moveTo(food)
     # print('Raw Food Coord:', food)
     return (int((food.y - top_left.y) / ((bottom_right.y - top_left.y) / height)),
             int((food.x - top_left.x) / ((bottom_right.x - top_left.x) / width)))
 
+
 # main function to run the game and use an algorithm to control the snake
-def algorithm():
+def set_up():
     game_field = np.array([[0 for _ in range(17)] for _ in range(15)])
 
     start_time = time.time()
@@ -52,7 +54,7 @@ def algorithm():
         print('Top Left', top_left, 'Bottom Right', bottom_right)
         raise TypeError("Game field not found")
 
-    starting_confidence = 0.95
+    starting_confidence = 0.90
     confidence = starting_confidence
     start_time = time.time()
     last_food = Point(-1, -1)
@@ -61,6 +63,7 @@ def algorithm():
         if food is not None:
             confidence = starting_confidence
             if food[0] != last_food.x and food[1] != last_food.y:
+                game_field[last_food.x][last_food.y] = 0
                 last_food = Point(food[0], food[1])
                 print("Food: ", food)
                 game_field[food[0]][food[1]] = 5
@@ -76,6 +79,12 @@ def algorithm():
             confidence -= 0.05
 
 
+# algorithm to control the snake
+def algorithm(game_field):
+    direction = 'right'
+    return direction
+
+
 if __name__ == '__main__':
     start = time.time()
     open_game()
@@ -85,4 +94,4 @@ if __name__ == '__main__':
     press_play()
     print('Pressing play took', time.time() - start, 'seconds')
     time.sleep(0.1)
-    algorithm()
+    set_up()
